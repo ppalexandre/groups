@@ -1,0 +1,31 @@
+body{
+    overflow: hidden;
+}
+
+legend {
+    font-size: 35px;
+}
+
+#loginForm {
+    font-size: 20px;
+    max-width: 18em;
+    min-height: 16em;
+    color: white;
+    text-align: center;
+    border-radius: 8px;
+    margin-top: 5vh;
+    box-shadow: 8px 8px 16px rgba(0, 0, 0, 0.4);
+}
+
+#errorBox{
+    margin-top: 0.5em;
+    width: 100%;
+    font-size: 17px;
+}
+
+.button {
+    margin-top: 5%;
+    padding-left: 10%;
+    padding-right: 10%;
+}
+

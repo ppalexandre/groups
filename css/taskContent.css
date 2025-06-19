@@ -1,0 +1,112 @@
+#topbar {
+    height: 40px;
+    padding: 0;
+}
+
+#centerContainer {
+    height: 100%;
+    max-height: calc(100vh - 90px);
+    overflow: scroll;
+}
+
+#task {
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0);
+    color: #ffffff;
+    margin-top: 2vh;
+    padding: 10px;
+}
+
+#taskCenter {
+    width: 100%;
+    height: 100%;
+    padding: 5px;
+}
+
+#taskTitle {
+    font-size: 40px;
+    margin-left: 25px;
+}
+
+#taskDate {
+    color: #aaaaaa;
+    font-size: 15px;
+    margin-left: 25px;
+    margin-top: -10px;
+    white-space: pre-wrap;
+}
+
+#taskBody {
+    margin-top: 15px;
+    margin-left: 25px;
+    text-align: justify;
+}
+
+#referenceFileTitle {
+    margin-top: 30px;
+    margin-bottom: -15px;
+    margin-left: 25px;
+}
+
+#referenceFileContainer {
+    margin-top: 15px;
+    margin-left: 25px;
+    width: calc(100% - 25px);
+    height: 50px;
+    font-size: 20px;
+    align-content: center;
+    align-items: center;
+}
+
+#referenceFileName {
+    margin-left: 10px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+#referenceFileIcon {
+    margin-left: 10px;
+}
+
+#referenceFileSize {
+    margin-left: 16px;
+    font-size: 16px;
+    color: #aaaaaa;
+}
+
+#taskFileUploadContainer {
+    display: inline-block;
+    margin-top: 35px;
+    margin-left: 25px;
+}
+
+#taskFileUploadLabel {
+    display: block;
+    font-size: 15px;
+    margin-bottom: 5px;
+}
+
+#taskSide {
+    width: 30%;
+    height: 100%;
+    padding: 5px;
+}
+
+#taskSendContainer {
+    display: inline-block;
+    margin-left: 25px;
+    margin-right: -55px;
+}
+
+#taskSendButton {
+    /* display: inline-block; */
+    margin-top: -5px;
+    margin-left: 10px;
+}
+
+#taskStatus {
+    display: inline-block;
+    margin-top: 35px;
+}

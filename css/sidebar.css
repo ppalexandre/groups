@@ -1,0 +1,76 @@
+:root {
+    --sidebar-width: 380px;
+}
+
+#sidebar {
+    width: var(--sidebar-width);
+    min-height: 100vh;
+    transition: width 0.35s ease;
+    overflow: none;
+}
+
+#sidebar.collapsing {
+    width: 0;
+    height: auto;
+    transition: width 0.35s ease;
+}
+
+.sideTask{
+    background-color: #25292d;
+    box-shadow: 0 4px 12px 0 rgba(0, 0, 0, 0.15);
+    min-height: 100px;
+    padding-right: 10px;
+    padding-left: 10px;
+    padding-top: 10px;
+    padding-bottom: 10px;
+    overflow: none;
+    z-index: 1;
+    margin-top: 2px;
+}
+
+.sideTaskTitle{
+    font-size: 18px;
+    color: #ffffff;
+    text-overflow: ellipsis;
+    overflow-wrap: break-word;
+    overflow: clip;
+    line-height: 1;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    line-clamp: 2;
+    -webkit-box-orient: vertical;
+    box-sizing: border-box;
+}
+
+.sideTaskDate{
+    font-size: 13px;
+    color: #aaaaaa;
+    text-overflow: ellipsis;
+    overflow-wrap: break-word;
+    overflow: clip;
+    line-height: 1;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    line-clamp: 2;
+    -webkit-box-orient: vertical;
+}
+
+.sideTaskHighlight {
+    background-color: #33373a;
+    box-shadow: 0 4px 12px 0 rgba(0, 0, 0, 0.25);
+    z-index: 2;
+}
+
+#sideTasksContainer{
+    overflow: scroll;
+}
+
+#groupsSidebarButton {
+    width: 50%;
+    height: 50px;
+}
+
+#tasksSidebarButton {
+    width: 50%;
+    height: 50px;
+}

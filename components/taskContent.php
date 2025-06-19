@@ -1,4 +1,5 @@
-<div id="mainContent" class="d-flex flex-grow-1 bg-body-secondary" data-bs-theme="dark">
+<link href="../css/taskContent.css" rel="stylesheet" type="text/css">
+<div id="taskContent" class="d-flex flex-grow-1 bg-body-secondary" data-bs-theme="dark">
   <div class="d-flex flex-column">
     <nav class="navbar navbar-expand-lg bg-body-tertiary bg-opacity-50" data-bs-theme="dark" id="topbar">
       <div class="container-fluid">
@@ -16,16 +17,17 @@
           <div id="taskBody">
           </div>
 
-          <div id="taskReferenceMaterialTitle">
+          <div id="referenceFileTitle">
+            Reference File:
           </div>
-          <div id="taskReferenceMaterialContainer">
-            <div id="taskReferenceMaterialName">
+          <div id="referenceFileContainer" class="bg-body-tertiary d-flex" data-bs-theme="dark">
+            <div id="referenceFileIcon">
 
             </div>
-            <div id="taskReferenceMaterialFileIcon">
+            <div id="referenceFileName">
 
             </div>
-            <div id="taskReferenceMaterialFile">
+            <div id="referenceFileSize">
 
             </div>
           </div>
@@ -37,11 +39,11 @@
 
           <div id="taskSendContainer">
             <div id="taskStatus">
-              Not Turned In
+              Not sent
             </div>
 
             <button id="taskSendButton" class="btn btn-primary me-3" type="button" onclick="taskFileUpload()">
-              Turn In
+              Send Task
             </button>
           </div>
         </div>
@@ -50,6 +52,4 @@
       </div>
     </div>
   </div>
-  <!--<div id="sideContainer" class="bg-body bg-opacity-75" data-bs-theme="dark">
-  </div>-->
 </div>
