@@ -1,5 +1,6 @@
 <?php
 require "sqlConfig.php";
+session_start();
 
 if ($_SERVER["REQUEST_METHOD"] === "POST") {
     // $ip = $_SERVER['REMOTE_ADDR'];

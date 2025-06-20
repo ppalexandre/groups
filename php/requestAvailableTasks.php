@@ -26,12 +26,12 @@ function send_available_tasks_info($user_id, $timestamp){
         $task_last_updated = strtotime($task_last_updated_query["task_last_updated"]);
 
         if ($timestamp < $task_last_updated){
-            $task_contents_query = mysqli_query($mysqli, "SELECT task_title, task_body, task_creation_date, task_completion_date, reference_file_id FROM tasks WHERE task_id=$task_id;");
+            $task_contents_query = mysqli_query($mysqli, "SELECT task_title, task_body, task_creation_date, task_deadline_date, reference_file_id FROM tasks WHERE task_id=$task_id;");
             $task_contents_query = $task_contents_query->fetch_assoc();
             $task_title = $task_contents_query["task_title"];
             $task_body = $task_contents_query["task_body"];
             $task_creation_date = $task_contents_query["task_creation_date"];
-            $task_completion_date = $task_contents_query["task_completion_date"];
+            $task_deadline_date = $task_contents_query["task_deadline_date"];
 
             $reference_file_id = $task_contents_query["reference_file_id"];
             $reference_file_query = mysqli_query($mysqli, "SELECT file_name, file_size, file_mime_type FROM files WHERE file_id=$reference_file_id;"); 
@@ -50,7 +50,7 @@ function send_available_tasks_info($user_id, $timestamp){
                 "taskTitle" => $task_title,
                 "taskBody" => $task_body,
                 "taskCreationDate" => $task_creation_date,
-                "taskCompletionDate" => $task_completion_date,
+                "taskDeadlineDate" => $task_deadline_date,
                 "referenceFileName" => $reference_file_name,
                 "referenceFileSize" => $reference_file_size,
                 "referenceFileMimeType" => $reference_file_mime_type,

@@ -29,7 +29,7 @@ function storeTaskData(taskData){
         let taskTitle = taskData[i].taskTitle;
         let taskBody = taskData[i].taskBody;
         let taskCreationDate = new Date(taskData[i].taskCreationDate);
-        let taskCompletionDate = new Date(taskData[i].taskCompletionDate);
+        let taskDeadlineDate = new Date(taskData[i].taskDeadlineDate);
         let referenceFileName = taskData[i].referenceFileName;
         let referenceFileSize = taskData[i].referenceFileSize;
         let referenceFileMimeType = taskData[i].referenceFileMimeType;
@@ -48,7 +48,7 @@ function storeTaskData(taskData){
             storedTasks[existingTaskIndex].taskTitle = taskTitle;
             storedTasks[existingTaskIndex].taskBody = taskBody;
             storedTasks[existingTaskIndex].taskCreationDate = taskCreationDate;
-            storedTasks[existingTaskIndex].taskCompletionDate = taskCompletionDate;
+            storedTasks[existingTaskIndex].taskDeadlineDate = taskDeadlineDate;
             storedTasks[existingTaskIndex].referenceFileName = referenceFileName;
             storedTasks[existingTaskIndex].referenceFileSize = referenceFileSize;
             storedTasks[existingTaskIndex].referenceMimeType = referenceMimeType;
@@ -61,7 +61,7 @@ function storeTaskData(taskData){
                 taskTitle: taskTitle,
                 taskBody: taskBody,
                 taskCreationDate: taskCreationDate,
-                taskCompletionDate: taskCompletionDate,
+                taskDeadlineDate: taskDeadlineDate,
                 referenceFileName: referenceFileName,
                 referenceFileSize: referenceFileSize,
                 referenceFileMimeType: referenceFileMimeType,
@@ -74,12 +74,12 @@ function storeTaskData(taskData){
 }
 
 function displaySideTask(storedTask){
-    let sideTasksContainer = document.getElementById("sideTasksContainer");
+    let sidebarMainContainer = document.getElementById("sidebarMainContainer");
 
     let taskId = storedTask.taskId;
     let taskTitle = storedTask.taskTitle;
     let taskCreationDate = storedTask.taskCreationDate;
-    let taskCompletionDate = storedTask.taskCompletionDate;
+    let taskDeadlineDate = storedTask.taskDeadlineDate;
     let sentTaskStatus = storedTask.sentTaskStatus;
     let sentTaskTimestamp = storedTask.sentTaskTimestamp;
 
@@ -93,7 +93,7 @@ function displaySideTask(storedTask){
         var sideTaskDateDiv = document.createElement("div");
         sideTaskDateDiv.className = "sideTaskDate";
 
-        sideTasksContainer.appendChild(sideTaskDiv);
+        sidebarMainContainer.appendChild(sideTaskDiv);
         sideTaskDiv.appendChild(sideTaskTitleDiv);
         sideTaskDiv.appendChild(sideTaskDateDiv);
         sideTaskDiv.addEventListener('click', function(){
@@ -118,9 +118,9 @@ function displaySideTask(storedTask){
         sideTaskDateDiv.innerText += `Sent: ${formattedSentTaskDate} ${formattedSentTaskTime}`;
     }
     else{
-        formattedTaskCompletionDate = taskCompletionDate.toLocaleDateString();
-        formattedTaskCompletionTime = taskCompletionDate.toLocaleTimeString();
-        sideTaskDateDiv.innerText += `Deadline: ${formattedTaskCompletionDate} ${formattedTaskCompletionTime}`;
+        formattedTaskDeadlineDate = taskDeadlineDate.toLocaleDateString();
+        formattedTaskDeadlineTime = taskDeadlineDate.toLocaleTimeString();
+        sideTaskDateDiv.innerText += `Deadline: ${formattedTaskDeadlineDate} ${formattedTaskDeadlineTime}`;
     }
     handleSideTaskCompletion(sentTaskStatus, taskId);
 }
@@ -141,7 +141,7 @@ function displayMainTask(storedTask){
     let taskTitle = storedTask.taskTitle;
     let taskBody = storedTask.taskBody;
     let taskCreationDate = storedTask.taskCreationDate;
-    let taskCompletionDate = storedTask.taskCompletionDate;
+    let taskDeadlineDate = storedTask.taskDeadlineDate;
     let referenceFileName = storedTask.referenceFileName;
     let referenceFileSize = storedTask.referenceFileSize;
     let referenceFileMimeType = storedTask.referenceFileMimeType;
@@ -151,13 +151,13 @@ function displayMainTask(storedTask){
     let formattedReferenceFileSize = formatFileSize(referenceFileSize);
     let formattedTaskCreationDate = taskCreationDate.toLocaleDateString();
     let formattedTaskCreationTime = taskCreationDate.toLocaleTimeString();
-    let formattedTaskCompletionDate = taskCompletionDate.toLocaleDateString();
-    let formattedTaskCompletionTime = taskCompletionDate.toLocaleTimeString();
+    let formattedTaskDeadlineDate = taskDeadlineDate.toLocaleDateString();
+    let formattedTaskDeadlineTime = taskDeadlineDate.toLocaleTimeString();
 
     taskTitleDiv.innerText = taskTitle;
     taskTitleDiv.innerHTML += "<br>";
     taskBodyDiv.innerText = taskBody;
-    taskDateDiv.innerText = `Posted: ${formattedTaskCreationDate} ${formattedTaskCreationTime}     Deadline: ${formattedTaskCompletionDate} ${formattedTaskCompletionTime}`;
+    taskDateDiv.innerText = `Posted: ${formattedTaskCreationDate} ${formattedTaskCreationTime}     Deadline: ${formattedTaskDeadlineDate} ${formattedTaskDeadlineTime}`;
 
     referenceFileContainerDiv.addEventListener('click', function(){
         referenceFileDownload(taskId, referenceFileName);

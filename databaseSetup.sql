@@ -20,7 +20,7 @@ CREATE TABLE tasks(
     groups_id int not null,
     FOREIGN KEY (groups_id) REFERENCES groups(groups_id),
     task_creation_date datetime not null,
-    task_completion_date datetime not null,
+    task_deadline_date datetime not null,
     task_last_updated timestamp not null
 );
 
@@ -44,7 +44,9 @@ CREATE TABLE users(
 
 CREATE TABLE groups(
     groups_id int primary key auto_increment,
-    group_name varchar(50) not null
+    group_name varchar(50) not null,
+    group_image_file_id int not null,
+    FOREIGN KEY (group_image_file_id) REFERENCES files(file_id),
 );
 
 CREATE TABLE group_members(

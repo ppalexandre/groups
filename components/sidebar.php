@@ -9,7 +9,7 @@
 
       </div>
     </div>
-    <div id="sideTasksContainer" class="d-flex flex-column-reverse justify-content-end flex-grow-1">
+    <div id="sidebarMainContainer" class="d-flex flex-column-reverse justify-content-end flex-grow-1">
     </div>
   </div>
 </div>
