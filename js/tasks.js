@@ -39,8 +39,8 @@ function storeTaskData(taskData){
         let taskId = taskData[i].taskId;
         let taskTitle = taskData[i].taskTitle;
         let taskBody = taskData[i].taskBody;
-        let taskCreationDate = new Date(taskData[i].taskCreationDate);
-        let taskDeadlineDate = new Date(taskData[i].taskDeadlineDate);
+        let taskCreationDate = convertToLocalDate(new Date(taskData[i].taskCreationDate));
+        let taskDeadlineDate = convertToLocalDate(new Date(taskData[i].taskDeadlineDate));
         let referenceFileStatus = taskData[i].referenceFileStatus;
         let referenceFileName = "";
         let referenceFileSize = "";
@@ -168,8 +168,6 @@ function displayMainTask(storedTask){
     let sentTaskStatus = storedTask.sentTaskStatus;
     let sentTaskTimestamp = storedTask.sentTaskTimestamp;
 
-    let formattedTaskCreationDate = taskCreationDate.toLocaleDateString();
-    let formattedTaskCreationTime = taskCreationDate.toLocaleTimeString();
     let formattedTaskDeadlineDate = taskDeadlineDate.toLocaleDateString();
     let formattedTaskDeadlineTime = taskDeadlineDate.toLocaleTimeString();
 
@@ -241,6 +239,12 @@ async function taskFileUpload(){
         }
     }
 } 
+
+function convertToLocalDate(dateUTC){
+    let dateLocal = new Date(dateUTC);
+    dateLocal.setMinutes(dateUTC.getMinutes() - dateUTC.getTimezoneOffset());
+    return dateLocal;
+}
 
 function formatFileSize(fileSize){
     if(fileSize < 1000){
@@ -356,6 +360,7 @@ async function submitNewTask(){
     let taskTitle = formTaskTitleDiv.value;
     let taskBody = formTaskBodyDiv.value;
     let taskDeadlineDate = formDeadlineDateDiv.value; // reminder to compare this to current date
+    taskDeadlineDate = new Date(taskDeadlineDate).getTime() / 1000;
     let file = formReferenceFileDiv.files[0];
 
     let groupId = currentlyDisplayedGroupId;
@@ -374,10 +379,10 @@ async function submitNewTask(){
             formData.append("file", file);
         }
 
-        formTaskTitleDiv.value = "";
-        formTaskBodyDiv.value = "";
-        formDeadlineDateDiv.value = "";
-        formReferenceFileDiv.value = "";
+        // formTaskTitleDiv.value = "";
+        // formTaskBodyDiv.value = "";
+        // formDeadlineDateDiv.value = "";
+        // formReferenceFileDiv.value = "";
 
         let taskCreationFetch = await fetch('../php/handleTaskCreation.php', {
             method: 'POST',

@@ -58,8 +58,8 @@ CREATE TABLE group_members(
 );
 
 -- Test data
-INSERT INTO groups (group_name) VALUES
-('test_group');
+INSERT INTO groups (groups_id, group_name) VALUES
+(1, 'test_group');
 
 INSERT INTO tasks (task_title, task_body, task_creation_date, task_completion_date, task_last_updated, task_user_sentee, groups_id, reference_file_id) VALUES
 ('Placeholder Title', 'Lorem ipsum dolor sit amet consectetur adipiscing elit quisque faucibus ex sapien vitae pellentesque sem placerat in id cursus mi pretium tellus duis convallis tempus leo eu aenean sed diam urna tempor pulvinar vivamus fringilla lacus nec metus bibendum egestas iaculis massa nisl malesuada lacinia integer nunc posuere ut hendrerit semper vel class aptent taciti sociosqu ad litora torquent per conubia nostra inceptos himenaeos orci varius natoque penatibus et magnis dis parturient montes nascetur ridiculus mus donec rhoncus eros lobortis nulla molestie mattis scelerisque maximus eget fermentum odio phasellus non purus est efficitur laoreet mauris pharetra vestibulum fusce dictum risus.', '2025-06-18 00:00:00', '2025-06-23 23:59:59', '2025-06-18 00:00:00', 1, 1, 35);

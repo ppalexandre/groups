@@ -11,7 +11,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
     $task_title = $_POST["taskTitle"];
     $task_body = $_POST["taskBody"];
     $task_creation_date = gmdate("Y-m-d H:i:s");
-    $task_deadline_date = $_POST["taskDeadlineDate"];
+    $task_deadline_date = $_POST["taskDeadlineDate"]; // iso string
     $group_id = $_POST["groupId"];
     $sent_task_user_ids = $_POST["sentTaskUserIds"];
     $user_id = $_SESSION["user_id"];
@@ -21,10 +21,11 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
         $task_title = mysqli_real_escape_string($mysqli, $task_title);
         $task_body = mysqli_real_escape_string($mysqli, $task_body);
         $task_deadline_date = mysqli_real_escape_string($mysqli, $task_deadline_date);
+        $task_deadline_date = gmdate("Y-m-d H:i:s", $task_deadline_date);
         
         if(strtotime($task_creation_date) > strtotime($task_deadline_date)){
             echo "ERROR: Task creation date is bigger than the deadline";
-            echo strtotime($task_creation_date) . " " . strtotime($task_deadline_date);
+            echo $task_creation_date . " " . $task_deadline_date;
             exit();
         }
         else if(!is_group_member($user_id, $group_id)){
