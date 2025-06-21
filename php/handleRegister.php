@@ -19,14 +19,21 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
         }
         else{
             create_user($username, $password);
+            $user_id = get_user_id($username);
             $_SESSION["logged_in"] = true;
             $_SESSION["username"] = $username;
-            $_SESSION["user_id"] = get_user_id($username);
+            $_SESSION["user_id"] = $user_id;
+            add_to_default_group(1, $user_id); // temporary
             send_response("User account created successfully.", true);
         }
     } 
 }
 
+// temporary until i properly add groups
+function add_to_default_group($group_id, $user_id){
+    global $mysqli;
+    mysqli_query($mysqli, "INSERT INTO group_members (groups_id, user_id) VALUES ($group_id, $user_id);");
+}
 
 function check_username_count($username, $password) {
     global $mysqli;

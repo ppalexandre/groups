@@ -18,7 +18,6 @@ if($_SESSION["logged_in"] != true){
   </head>
   <body>
     <div class="d-flex">
-      <?php include "../components/sideNavbar.php"; ?>
       <?php include "../components/sidebar.php"; ?>
       <div id="mainContainer" class="d-flex flex-column">
         <?php include "../components/navbar.php"; ?>

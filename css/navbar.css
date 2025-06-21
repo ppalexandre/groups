@@ -33,3 +33,11 @@
 .collapse.navbar-collapse.show > *{
     z-index: 5;
 }
+
+#toggleSidebarButton {
+    display: block;
+    border: none;
+    margin-left: 5px;
+    margin-right: 16px;
+    transform: rotate(180);
+}

@@ -7,7 +7,15 @@
   </head>
   <body>
     <?php
-      header("Location: pages/home.php");
+      session_start();
+      if($_SESSION["logged_in"] != true){
+        header("Location: pages/login.php"); 
+        exit();
+      }
+      else{
+        header("Location: pages/tasks.php"); 
+        exit();
+      }
     ?>
   </body>
 </html>

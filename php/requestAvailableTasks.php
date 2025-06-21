@@ -34,11 +34,17 @@ function send_available_tasks_info($user_id, $timestamp){
             $task_deadline_date = $task_contents_query["task_deadline_date"];
 
             $reference_file_id = $task_contents_query["reference_file_id"];
-            $reference_file_query = mysqli_query($mysqli, "SELECT file_name, file_size, file_mime_type FROM files WHERE file_id=$reference_file_id;"); 
-            $reference_file_query = $reference_file_query->fetch_assoc();
-            $reference_file_name = $reference_file_query["file_name"];
-            $reference_file_size = $reference_file_query["file_size"];
-            $reference_file_mime_type = $reference_file_query["file_mime_type"];
+            if (!empty($reference_file_id)){
+                $reference_file_status = true;
+                $reference_file_query = mysqli_query($mysqli, "SELECT file_name, file_size, file_mime_type FROM files WHERE file_id=$reference_file_id;"); 
+                $reference_file_query = $reference_file_query->fetch_assoc();
+                $reference_file_name = $reference_file_query["file_name"];
+                $reference_file_size = $reference_file_query["file_size"];
+                $reference_file_mime_type = $reference_file_query["file_mime_type"];
+            }
+            else{
+                $reference_file_status = false;
+            }
 
             $sent_task_query = mysqli_query($mysqli, "SELECT sent_task_status, sent_task_timestamp FROM sent_tasks WHERE task_id=$task_id;");
             $sent_task_query = $sent_task_query->fetch_assoc();
@@ -51,17 +57,21 @@ function send_available_tasks_info($user_id, $timestamp){
                 "taskBody" => $task_body,
                 "taskCreationDate" => $task_creation_date,
                 "taskDeadlineDate" => $task_deadline_date,
-                "referenceFileName" => $reference_file_name,
-                "referenceFileSize" => $reference_file_size,
-                "referenceFileMimeType" => $reference_file_mime_type,
+                "referenceFileStatus" => $reference_file_status,
                 "sentTaskStatus" => $sent_task_status,
                 "sentTaskTimestamp" => $sent_task_timestamp
             );
+            if($reference_file_status){
+                $task["referenceFileName"] = $reference_file_name;
+                $task["referenceFileSize"] = $reference_file_size;
+                $task["referenceFileMimeType"] = $reference_file_mime_type;
+            }
             $task_list[] = $task;
 
-            $jsonObject->taskList = $task_list;
         }
-
+    }
+    if(!empty($task_list)){
+        $jsonObject->taskList = $task_list;
     }
     $jsonObject = json_encode($jsonObject);
     echo $jsonObject;

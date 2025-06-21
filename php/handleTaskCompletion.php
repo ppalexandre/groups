@@ -3,6 +3,7 @@ require "sqlConfig.php";
 session_start();
 
 const FILE_DIR = "../uploads/";
+const FILE_SIZE_LIMIT = 5000000; // ~5MB
 
 if ($_SERVER["REQUEST_METHOD"] === "POST") {
     /* $ip = $_SERVER['REMOTE_ADDR']; */
@@ -76,13 +77,14 @@ function handle_file_upload(){
         $file_size = $_FILES["file"]["size"];
         $file_mime_type = mime_content_type($file_tmp_name);
 
-        // ~5MB size limit
-        if ($file_size > 5000000) {
+        if ($file_size > FILE_SIZE_LIMIT) {
             echo "Error: File failed to upload, file size is too big"; 
             return false;
         }
 
-        store_file_information($file_name, $file_size, $file_mime_type);
+        mysqli_query($mysqli, 
+            "INSERT INTO files (file_name, file_size, file_mime_type)
+            VALUES('$file_name', $file_size, '$file_mime_type');");
         $file_id_query = mysqli_query($mysqli, "SELECT MAX(file_id) FROM files WHERE file_name='$file_name' AND file_size=$file_size;");
         $file_id = $file_id_query->fetch_assoc();
         $file_id = $file_id["MAX(file_id)"];
@@ -105,12 +107,5 @@ function handle_file_upload(){
         }
 
     }
-}
-
-function store_file_information($file_name, $file_size, $file_mime_type){
-    global $mysqli;
-    $insert_file = mysqli_query($mysqli, 
-        "INSERT INTO files (file_name, file_size, file_mime_type)
-        VALUES('$file_name', $file_size, '$file_mime_type');");
 }
 ?>

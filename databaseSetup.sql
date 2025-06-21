@@ -11,7 +11,7 @@ CREATE TABLE files(
 
 CREATE TABLE tasks(
     task_id int primary key auto_increment,
-    task_title varchar(200) not null,
+    task_title varchar(100) not null,
     task_body varchar(2000) not null,
     reference_file_id int,
     FOREIGN KEY (reference_file_id) REFERENCES files(file_id),
@@ -46,7 +46,7 @@ CREATE TABLE groups(
     groups_id int primary key auto_increment,
     group_name varchar(50) not null,
     group_image_file_id int not null,
-    FOREIGN KEY (group_image_file_id) REFERENCES files(file_id),
+    FOREIGN KEY (group_image_file_id) REFERENCES files(file_id)
 );
 
 CREATE TABLE group_members(

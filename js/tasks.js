@@ -1,8 +1,13 @@
 let lastUpdatedTimestamp = 0;
 let storedTasks = [];
 let currentlyDisplayedTaskId = 0;
+let currentlyDisplayedReferenceFileName = "";
+let currentlyDisplayedGroupId = 1; // temporary until i properly add groups
 
-async function requestAvailableTasks(){
+async function requestAvailableTasks(focusOnTask){
+    if (focusOnTask == null){
+        focusOnTask = false;
+    }
     var availableTasksDataFetch = await fetch(`../php/requestAvailableTasks.php?timestamp=${lastUpdatedTimestamp}`, {
         method: 'GET',
         headers: {'Content-type': 'text/plain'}
@@ -12,11 +17,17 @@ async function requestAvailableTasks(){
 
     if (availableTasksData != ""){
         availableTasksData = JSON.parse(availableTasksData); 
-        storeTaskData(availableTasksData);
-        for (let i = 0; i < storedTasks.length; i++){
-            displaySideTask(storedTasks[i]);
+        if(availableTasksData.taskList != null){
+            storeTaskData(availableTasksData);
+
+            for (let i = 0; i < storedTasks.length; i++){
+                displaySideTask(storedTasks[i]);
+            }
+
+            if(focusOnTask === true){
+                displayMainTask(storedTasks.at(-1));
+            }
         }
-        displayMainTask(storedTasks[0]);
         let lastUpdatedTimestamp = Date.now();
     }
 }
@@ -30,9 +41,15 @@ function storeTaskData(taskData){
         let taskBody = taskData[i].taskBody;
         let taskCreationDate = new Date(taskData[i].taskCreationDate);
         let taskDeadlineDate = new Date(taskData[i].taskDeadlineDate);
-        let referenceFileName = taskData[i].referenceFileName;
-        let referenceFileSize = taskData[i].referenceFileSize;
-        let referenceFileMimeType = taskData[i].referenceFileMimeType;
+        let referenceFileStatus = taskData[i].referenceFileStatus;
+        let referenceFileName = "";
+        let referenceFileSize = "";
+        let referenceFileMimeType = "";
+        if (referenceFileStatus){
+            referenceFileName = taskData[i].referenceFileName;
+            referenceFileSize = taskData[i].referenceFileSize;
+            referenceFileMimeType = taskData[i].referenceFileMimeType;
+        }
         let sentTaskStatus = taskData[i].sentTaskStatus;
         let sentTaskTimestamp = new Date(taskData[i].sentTaskTimestamp);
 
@@ -49,9 +66,10 @@ function storeTaskData(taskData){
             storedTasks[existingTaskIndex].taskBody = taskBody;
             storedTasks[existingTaskIndex].taskCreationDate = taskCreationDate;
             storedTasks[existingTaskIndex].taskDeadlineDate = taskDeadlineDate;
+            storedTasks[existingTaskIndex].referenceFileStatus = referenceFileStatus;
             storedTasks[existingTaskIndex].referenceFileName = referenceFileName;
             storedTasks[existingTaskIndex].referenceFileSize = referenceFileSize;
-            storedTasks[existingTaskIndex].referenceMimeType = referenceMimeType;
+            storedTasks[existingTaskIndex].referenceFileMimeType = referenceFileMimeType;
             storedTasks[existingTaskIndex].sentTaskStatus = sentTaskStatus;
             storedTasks[existingTaskIndex].sentTaskTimestamp = sentTaskTimestamp;
         }
@@ -62,6 +80,7 @@ function storeTaskData(taskData){
                 taskBody: taskBody,
                 taskCreationDate: taskCreationDate,
                 taskDeadlineDate: taskDeadlineDate,
+                referenceFileStatus: referenceFileStatus,
                 referenceFileName: referenceFileName,
                 referenceFileSize: referenceFileSize,
                 referenceFileMimeType: referenceFileMimeType,
@@ -87,7 +106,7 @@ function displaySideTask(storedTask){
     if(sideTaskDiv === null){
         sideTaskDiv = document.createElement("div");
         sideTaskDiv.id = "task" + taskId;
-        sideTaskDiv.className = "sideTask";
+        sideTaskDiv.className = "sideTask sidebarButton";
         var sideTaskTitleDiv = document.createElement("div");
         sideTaskTitleDiv.className = "sideTaskTitle";
         var sideTaskDateDiv = document.createElement("div");
@@ -99,11 +118,10 @@ function displaySideTask(storedTask){
         sideTaskDiv.addEventListener('click', function(){
             displayMainTask(storedTask);
         }); 
-        sideTaskDiv.style.cursor = "pointer";
     }
     else{
-        var sideTaskTitleDiv = sideTaskDiv.children.getElementsByClassName("sideTaskTitle")[0];
-        var sideTaskDateDiv = sideTaskDiv.children.getElementsByClassName("sideTaskDate")[0];
+        var sideTaskTitleDiv = sideTaskDiv.getElementsByClassName("sideTaskTitle")[0];
+        var sideTaskDateDiv = sideTaskDiv.getElementsByClassName("sideTaskDate")[0];
     }
 
     formattedTaskCreationDate = taskCreationDate.toLocaleDateString();
@@ -112,7 +130,7 @@ function displaySideTask(storedTask){
     sideTaskTitleDiv.innerText = taskTitle;
     sideTaskDateDiv.innerText = `Posted: ${formattedTaskCreationDate} ${formattedTaskCreationTime}`
     sideTaskDateDiv.innerHTML += ` <br> `
-    if(sentTaskStatus){
+    if(sentTaskStatus == 1){
         formattedSentTaskDate = sentTaskTimestamp.toLocaleDateString();
         formattedSentTaskTime = sentTaskTimestamp.toLocaleTimeString();
         sideTaskDateDiv.innerText += `Sent: ${formattedSentTaskDate} ${formattedSentTaskTime}`;
@@ -132,6 +150,7 @@ function displayMainTask(storedTask){
     let taskTitleDiv = document.getElementById("taskTitle");
     let taskDateDiv = document.getElementById("taskDate");
     let taskBodyDiv = document.getElementById("taskBody");
+    let referenceFileTitleDiv = document.getElementById("referenceFileTitle");
     let referenceFileContainerDiv = document.getElementById("referenceFileContainer");
     let referenceFileNameDiv = document.getElementById("referenceFileName");
     let referenceFileSizeDiv = document.getElementById("referenceFileSize");
@@ -142,13 +161,13 @@ function displayMainTask(storedTask){
     let taskBody = storedTask.taskBody;
     let taskCreationDate = storedTask.taskCreationDate;
     let taskDeadlineDate = storedTask.taskDeadlineDate;
+    let referenceFileStatus = storedTask.referenceFileStatus;
     let referenceFileName = storedTask.referenceFileName;
     let referenceFileSize = storedTask.referenceFileSize;
     let referenceFileMimeType = storedTask.referenceFileMimeType;
     let sentTaskStatus = storedTask.sentTaskStatus;
     let sentTaskTimestamp = storedTask.sentTaskTimestamp;
 
-    let formattedReferenceFileSize = formatFileSize(referenceFileSize);
     let formattedTaskCreationDate = taskCreationDate.toLocaleDateString();
     let formattedTaskCreationTime = taskCreationDate.toLocaleTimeString();
     let formattedTaskDeadlineDate = taskDeadlineDate.toLocaleDateString();
@@ -159,18 +178,27 @@ function displayMainTask(storedTask){
     taskBodyDiv.innerText = taskBody;
     taskDateDiv.innerText = `Posted: ${formattedTaskCreationDate} ${formattedTaskCreationTime}     Deadline: ${formattedTaskDeadlineDate} ${formattedTaskDeadlineTime}`;
 
-    referenceFileContainerDiv.addEventListener('click', function(){
-        referenceFileDownload(taskId, referenceFileName);
-    }); 
-    referenceFileContainerDiv.style.cursor = "pointer";
-    referenceFileNameDiv.innerText = referenceFileName;
-    referenceFileSizeDiv.innerText = formattedReferenceFileSize;
-    referenceFileIconDiv.innerText = referenceFileMimeType;
+    if(referenceFileStatus == true){
+        let formattedReferenceFileSize = formatFileSize(referenceFileSize);
+
+        referenceFileTitleDiv.style.display = "inline-block";
+        referenceFileContainerDiv.style.display = "flex";
+        referenceFileContainerDiv.style.cursor = "pointer";
+        referenceFileNameDiv.innerText = referenceFileName;
+        referenceFileSizeDiv.innerText = formattedReferenceFileSize;
+        referenceFileIconDiv.innerText = referenceFileMimeType;
+        currentlyDisplayedReferenceFileName = referenceFileName;
+    }
+    else{
+        referenceFileTitleDiv.style.display = "none";
+        referenceFileContainerDiv.style.display = "none";
+    }
 
     changeTaskStatusDisplay(sentTaskStatus, sentTaskTimestamp);
     currentlyDisplayedTaskId = taskId;
+    highlightSidebarButton("task" + taskId);
     handleSideTaskCompletion(sentTaskStatus, taskId);
-    highlightSideTask(taskId);
+    displayMainTaskDiv();
 }
 
 
@@ -209,6 +237,7 @@ async function taskFileUpload(){
             response = JSON.parse(response);
             storeTaskStatus(response.taskStatus, taskId);
             changeTaskStatusDisplay(response.taskStatus, response.taskTimestamp);
+            handleSideTaskCompletion(response.taskStatus, taskId);
         }
     }
 } 
@@ -245,19 +274,35 @@ function storeTaskStatus(taskStatus, taskId){
     return false;
 }
 
-function highlightSideTask(taskId){
-    let lastHighlightedDiv = document.getElementsByClassName("sideTask sideTaskHighlight")[0];
-    if (lastHighlightedDiv != null){
-        lastHighlightedDiv.className = "sideTask";
-    }
-
-    let sideTaskDiv = document.getElementById("task" + taskId);
-    sideTaskDiv.className = "sideTask sideTaskHighlight";
+function highlightSidebarButton(id){
+    unhighlightSidebarButtons();
+    let sidebarButtonClassList = document.getElementById(id).classList;
+    sidebarButtonClassList.remove("sidebarButton");
+    sidebarButtonClassList.add("sidebarButtonHighlight");
 }
+
+function unhighlightSidebarButtons(){
+    try{
+        const highlightedDivs = document.querySelectorAll(".sidebarButtonHighlight");
+        for (let i = 0; i < highlightedDivs.length; i++){
+            highlightedDivs[i].classList.remove("sidebarButtonHighlight");
+            highlightedDivs[i].classList.add("sidebarButton");
+        }
+    }
+    catch{
+        console.log("ERROR: No button to unhighlight");
+    }
+}
+
 
 function handleSideTaskCompletion(taskStatus, taskId){
     let sideTaskDiv = document.getElementById("task" + taskId);
-    sideTaskDiv.style.borderLeft = "3px solid #77aa77";
+    if(taskStatus == 1){
+        sideTaskDiv.style.borderLeft = "3px solid #77aa77";
+    }
+    else{
+        sideTaskDiv.style.borderLeft = "none";
+    }
 }
 
 function changeTaskStatusDisplay(taskStatus){
@@ -268,9 +313,90 @@ function changeTaskStatusDisplay(taskStatus){
         taskSendButtonDiv.innerText = "Send task again"; 
     }
     else if (taskStatus === "0" || taskStatus === false){
-        taskSendButtonDiv.innerText = "Not sent"; 
-        taskStatusDiv.innerText = "Send task"; 
+        taskStatusDiv.innerText = "Not sent"; 
+        taskSendButtonDiv.innerText = "Send Task"; 
     }
+}
+
+function displayMainTaskDiv(){
+    let taskCreationFormContainer = document.getElementById("taskCreationFormContainer");
+    taskCreationFormContainer.style.display = "none";
+    let mainTaskDiv = document.getElementById("task");
+    mainTaskDiv.style.display = "block";
+}
+
+function displayTaskCreationForm(){
+    let mainTaskDiv = document.getElementById("task");
+    mainTaskDiv.style.display = "none";
+    let taskCreationFormContainer = document.getElementById("taskCreationFormContainer");
+    taskCreationFormContainer.style.display = "block";
+    highlightSidebarButton("sidebarTopButton");
+}
+
+async function getAllGroupMemberIds(groupId){
+    var groupMembersIdsFetch = await fetch(`../php/requestAllGroupMembers.php?groupId=${groupId}`, {
+        method: 'GET',
+        headers: {'Content-type': 'text/plain'}
+    })
+        .catch((error) => console.error('ERROR:', error));
+    let response = await groupMembersIdsFetch.text();
+
+    if (response != ""){
+        response = JSON.parse(response);
+        return response.userIds;
+    }
+}
+
+async function submitNewTask(){
+    let formTaskTitleDiv = document.getElementById("formTaskTitle"); 
+    let formTaskBodyDiv = document.getElementById("formTaskBody"); 
+    let formDeadlineDateDiv = document.getElementById("formDeadlineDate"); 
+    let formReferenceFileDiv = document.getElementById("formReferenceFile");  
+
+    let taskTitle = formTaskTitleDiv.value;
+    let taskBody = formTaskBodyDiv.value;
+    let taskDeadlineDate = formDeadlineDateDiv.value; // reminder to compare this to current date
+    let file = formReferenceFileDiv.files[0];
+
+    let groupId = currentlyDisplayedGroupId;
+    let sentTaskUserIds = await getAllGroupMemberIds(groupId);
+    sentTaskUserIds = JSON.stringify(sentTaskUserIds);
+
+    if (taskTitle != null && taskBody != null && taskDeadlineDate != null && groupId != null && sentTaskUserIds != null){
+        let formData = new FormData();
+        formData.append("taskTitle", taskTitle);
+        formData.append("taskBody", taskBody);
+        formData.append("taskDeadlineDate", taskDeadlineDate);
+        formData.append("groupId", groupId);
+        formData.append("sentTaskUserIds", sentTaskUserIds);
+
+        if(file != undefined && file != ""){
+            formData.append("file", file);
+        }
+
+        formTaskTitleDiv.value = "";
+        formTaskBodyDiv.value = "";
+        formDeadlineDateDiv.value = "";
+        formReferenceFileDiv.value = "";
+
+        let taskCreationFetch = await fetch('../php/handleTaskCreation.php', {
+            method: 'POST',
+            body: formData
+        })
+            .catch((error) => console.error('ERROR:', error));
+        let response = await taskCreationFetch.text();
+        if (response != ""){
+            console.log(response); // temporary
+            requestAvailableTasks(false);
+        }
+    }
+} 
+
+function clearNewTaskForm(){
+    let usernameElement = document.getElementById("username");
+    let passwordElement = document.getElementById("password");
+    usernameElement.value = "";
+    passwordElement.value = "";
 }
 
 function spinIcon(iconId){
@@ -291,4 +417,29 @@ function spinIcon(iconId){
     }
 }
 
-requestAvailableTasks();
+function toggleSidebar(){
+    spinIcon("collapseIcon");
+    let sidebarDiv = document.getElementById("sidebar");
+    if(sidebarDiv.style.minWidth == "0px"){
+        sidebarDiv.style.minWidth = "300px";
+        sidebarDiv.style.width = "300px";
+    }
+    else{
+        sidebarDiv.style.minWidth = "0px";
+        sidebarDiv.style.width = "0px";
+    }
+}
+
+requestAvailableTasks(true);
+
+let referenceFileContainerDiv = document.getElementById("referenceFileContainer");
+referenceFileContainerDiv.addEventListener('click', function(){
+    referenceFileDownload(currentlyDisplayedTaskId, currentlyDisplayedReferenceFileName);
+}); 
+
+let sidebarTopButton = document.getElementById("sidebarTopButton");
+sidebarTopButton.addEventListener('click', function(){
+    displayTaskCreationForm();
+}); 
+
+// setInterval(requestAvailableTasks(false), 5000);
