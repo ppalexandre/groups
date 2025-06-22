@@ -29,7 +29,8 @@ async function requestAvailableTasks(focusOnTask){
                 displayMainTask(storedTasks.at(-1));
             }
         }
-        let lastUpdatedTimestamp = Date.now();
+        // Fix this later
+        // lastUpdatedTimestamp = Date.now();
     }
 }
 
@@ -191,7 +192,9 @@ function displayMainTask(storedTask){
         referenceFileContainerDiv.style.cursor = "pointer";
         referenceFileNameDiv.innerText = referenceFileName;
         referenceFileSizeDiv.innerText = formattedReferenceFileSize;
-        referenceFileIconDiv.innerText = referenceFileMimeType;
+        let referenceFileIconPath = referenceFileMimeType.replace(/\//, "-");
+        referenceFileIconPath += ".svg";
+        referenceFileIconDiv.style.backgroundImage = `url(../imgs/mimetypes/${referenceFileIconPath})`;
         currentlyDisplayedReferenceFileName = referenceFileName;
     }
     else{
@@ -452,8 +455,8 @@ async function submitNewTask(){
             if(response.errorMessage != ""){
                 window.alert(response.errorMessage);
             }
-            requestAvailableTasks(false);
         }
+        requestAvailableTasks(false);
     }
 } 
 

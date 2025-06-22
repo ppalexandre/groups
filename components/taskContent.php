@@ -48,7 +48,7 @@
         <label for="formTaskTitle">Task Title:</label>
         <div class="input-group mb-3 container align-self-center">
           <input type="text" class="form-control" id="formTaskTitle" name="taskTitle" placeholder="Task Title"
-            aria-label="Task Title" maxlength="150" required>
+            aria-label="Task Title" maxlength="200" required>
         </div>
 
         <label for="formTaskBody">Task Body:</label>

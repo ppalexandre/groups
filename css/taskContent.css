@@ -77,6 +77,9 @@
 
 #referenceFileIcon {
     margin-left: 10px;
+    width: 32px;
+    height: 32px;
+    background-size: contain;
 }
 
 #referenceFileSize {

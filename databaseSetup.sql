@@ -6,12 +6,12 @@ CREATE TABLE files(
     file_id int primary key auto_increment,
     file_name varchar(200) not null,
     file_size int not null,
-    file_mime_type varchar(20) not null
+    file_mime_type varchar(100) not null
 );
 
 CREATE TABLE tasks(
     task_id int primary key auto_increment,
-    task_title varchar(150) not null,
+    task_title varchar(200) not null,
     task_body varchar(3000) not null,
     reference_file_id int,
     FOREIGN KEY (reference_file_id) REFERENCES files(file_id),
