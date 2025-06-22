@@ -42,6 +42,7 @@ function storeTaskData(taskData){
         let taskBody = taskData[i].taskBody;
         let taskCreationDate = convertToLocalDate(new Date(taskData[i].taskCreationDate));
         let taskDeadlineDate = convertToLocalDate(new Date(taskData[i].taskDeadlineDate));
+        let taskCreatorName = taskData[i].taskCreatorName;
         let referenceFileStatus = taskData[i].referenceFileStatus;
         let referenceFileName = "";
         let referenceFileSize = "";
@@ -67,6 +68,7 @@ function storeTaskData(taskData){
             storedTasks[existingTaskIndex].taskBody = taskBody;
             storedTasks[existingTaskIndex].taskCreationDate = taskCreationDate;
             storedTasks[existingTaskIndex].taskDeadlineDate = taskDeadlineDate;
+            storedTasks[existingTaskIndex].taskCreatorName = taskCreatorName;
             storedTasks[existingTaskIndex].referenceFileStatus = referenceFileStatus;
             storedTasks[existingTaskIndex].referenceFileName = referenceFileName;
             storedTasks[existingTaskIndex].referenceFileSize = referenceFileSize;
@@ -81,6 +83,7 @@ function storeTaskData(taskData){
                 taskBody: taskBody,
                 taskCreationDate: taskCreationDate,
                 taskDeadlineDate: taskDeadlineDate,
+                taskCreatorName: taskCreatorName,
                 referenceFileStatus: referenceFileStatus,
                 referenceFileName: referenceFileName,
                 referenceFileSize: referenceFileSize,
@@ -149,6 +152,7 @@ function displayMainTask(storedTask){
     let centerContainer = document.getElementById("centerContainer");
     let taskDiv = document.getElementById("task");
     let taskTitleDiv = document.getElementById("taskTitle");
+    let taskCreatorDiv = document.getElementById("taskCreator");
     let taskDateDiv = document.getElementById("taskDate");
     let taskBodyDiv = document.getElementById("taskBody");
     let referenceFileTitleDiv = document.getElementById("referenceFileTitle");
@@ -162,6 +166,7 @@ function displayMainTask(storedTask){
     let taskBody = storedTask.taskBody;
     let taskCreationDate = storedTask.taskCreationDate;
     let taskDeadlineDate = storedTask.taskDeadlineDate;
+    let taskCreatorName = storedTask.taskCreatorName;
     let referenceFileStatus = storedTask.referenceFileStatus;
     let referenceFileName = storedTask.referenceFileName;
     let referenceFileSize = storedTask.referenceFileSize;
@@ -173,6 +178,7 @@ function displayMainTask(storedTask){
     let formattedTaskDeadlineTime = taskDeadlineDate.toLocaleTimeString();
 
     taskTitleDiv.innerText = taskTitle;
+    taskCreatorDiv.innerText = `By: ${taskCreatorName}`;
     taskTitleDiv.innerHTML += "<br>";
     taskBodyDiv.innerText = taskBody;
     taskDateDiv.innerText = `Posted: ${formattedTaskCreationDate} ${formattedTaskCreationTime}     Deadline: ${formattedTaskDeadlineDate} ${formattedTaskDeadlineTime}`;

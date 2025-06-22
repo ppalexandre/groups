@@ -46,7 +46,7 @@ function create_task($user_id, $task_title, $task_body, $task_creation_date, $ta
     if (isset($file_id)){
         mysqli_query($mysqli, 
             "INSERT INTO tasks (
-            task_user_sentee, 
+            task_creator_id, 
             task_title, 
             task_body, 
             task_creation_date, 
@@ -70,7 +70,7 @@ function create_task($user_id, $task_title, $task_body, $task_creation_date, $ta
     else{
         mysqli_query($mysqli, 
             "INSERT INTO tasks (
-            task_user_sentee, 
+            task_creator_id, 
             task_title, 
             task_body, 
             task_creation_date, 
@@ -92,7 +92,7 @@ function create_task($user_id, $task_title, $task_body, $task_creation_date, $ta
     $task_id_query = mysqli_query($mysqli, "SELECT MAX(task_id) FROM tasks WHERE
         task_title='$task_title' AND
         groups_id=$group_id AND
-        task_user_sentee=$user_id AND
+        task_creator_id=$user_id AND
         task_creation_date='$task_creation_date'
         ;");
     $task_id_query = $task_id_query->fetch_assoc();

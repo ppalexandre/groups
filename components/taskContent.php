@@ -4,6 +4,8 @@
     <div id="task">
       <div id="taskTitle">
       </div>
+      <div id="taskCreator">
+      </div>
       <div id="taskDate">
       </div>
       <div id="taskBody">
@@ -46,13 +48,13 @@
         <label for="formTaskTitle">Task Title:</label>
         <div class="input-group mb-3 container align-self-center">
           <input type="text" class="form-control" id="formTaskTitle" name="taskTitle" placeholder="Task Title"
-            aria-label="Task Title" maxlength="100" required>
+            aria-label="Task Title" maxlength="150" required>
         </div>
 
         <label for="formTaskBody">Task Body:</label>
         <div class="input-group mb-3 container align-self-center">
           <textarea class="form-control" id="formTaskBody" name="taskBody" placeholder="Task Body"
-            aria-label="Task Body" maxlength="2000" required rows="3"></textarea>
+            aria-label="Task Body" maxlength="3000" required rows="3"></textarea>
         </div>
 
         <label for="formDeadlineDate">Deadline Date:</label>

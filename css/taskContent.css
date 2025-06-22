@@ -3,7 +3,6 @@
     width: 100%;
     height: 100%;
     min-height: 100%;
-    /* max-height: calc(100vh - 90px); */
     overflow: auto;
 }
 
@@ -26,6 +25,16 @@
     font-size: 40px;
     margin-left: 25px;
     word-break: break-all;
+    line-height: 1;
+}
+
+#taskCreator {
+    color: #dddddd;
+    font-size: 18px;
+    margin-left: 25px;
+    margin-bottom: 10px;
+    word-break: break-all;
+    white-space: pre-wrap;
 }
 
 #taskDate {
@@ -95,7 +104,6 @@
 }
 
 #taskSendButton {
-    /* display: inline-block; */
     margin-top: -5px;
     margin-left: 10px;
 }
@@ -107,7 +115,6 @@
 
 #taskCreationFormContainer {
     display: none;
-    /* display: block; */
     width: 100%;
     height: 100%;
     color: #ffffff;

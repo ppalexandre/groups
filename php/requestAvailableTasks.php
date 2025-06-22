@@ -26,12 +26,24 @@ function send_available_tasks_info($user_id, $timestamp){
         $task_last_updated = strtotime($task_last_updated_query["task_last_updated"]);
 
         if ($timestamp < $task_last_updated){
-            $task_contents_query = mysqli_query($mysqli, "SELECT task_title, task_body, task_creation_date, task_deadline_date, reference_file_id FROM tasks WHERE task_id=$task_id;");
+            $task_contents_query = mysqli_query($mysqli, "SELECT 
+                task_title, 
+                task_body,  
+                task_creation_date, 
+                task_deadline_date, 
+                task_creator_id,
+                reference_file_id
+                FROM tasks WHERE task_id=$task_id;");
             $task_contents_query = $task_contents_query->fetch_assoc();
             $task_title = $task_contents_query["task_title"];
             $task_body = $task_contents_query["task_body"];
             $task_creation_date = $task_contents_query["task_creation_date"];
             $task_deadline_date = $task_contents_query["task_deadline_date"];
+            $task_creator_id = $task_contents_query["task_creator_id"];
+
+            $task_creator_name_query = mysqli_query($mysqli, "SELECT user_name FROM users WHERE user_id=$task_creator_id");
+            $task_creator_name_query = $task_creator_name_query->fetch_assoc();
+            $task_creator_name = $task_creator_name_query["user_name"];
 
             $reference_file_id = $task_contents_query["reference_file_id"];
             if (!empty($reference_file_id)){
@@ -57,6 +69,7 @@ function send_available_tasks_info($user_id, $timestamp){
                 "taskBody" => $task_body,
                 "taskCreationDate" => $task_creation_date,
                 "taskDeadlineDate" => $task_deadline_date,
+                "taskCreatorName" => $task_creator_name,
                 "referenceFileStatus" => $reference_file_status,
                 "sentTaskStatus" => $sent_task_status,
                 "sentTaskTimestamp" => $sent_task_timestamp
