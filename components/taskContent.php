@@ -34,7 +34,7 @@
           Not sent
         </div>
 
-        <button id="taskSendButton" class="btn btn-primary me-3" type="button" onclick="taskFileUpload()">
+        <button id="taskSendButton" class="btn btn-primary me-3" type="button" onclick="taskSendButton()">
           Send Task
         </button>
       </div>

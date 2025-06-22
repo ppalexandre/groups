@@ -11,7 +11,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
     $task_title = $_POST["taskTitle"];
     $task_body = $_POST["taskBody"];
     $task_creation_date = gmdate("Y-m-d H:i:s");
-    $task_deadline_date = $_POST["taskDeadlineDate"]; // iso string
+    $task_deadline_date = $_POST["taskDeadlineDate"];
     $group_id = $_POST["groupId"];
     $sent_task_user_ids = $_POST["sentTaskUserIds"];
     $user_id = $_SESSION["user_id"];
@@ -24,12 +24,11 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
         $task_deadline_date = gmdate("Y-m-d H:i:s", $task_deadline_date);
         
         if(strtotime($task_creation_date) > strtotime($task_deadline_date)){
-            echo "ERROR: Task creation date is bigger than the deadline";
-            echo $task_creation_date . " " . $task_deadline_date;
+            send_error_message("ERROR: Task creation date is bigger than the deadline");
             exit();
         }
         else if(!is_group_member($user_id, $group_id)){
-            echo "ERROR: User is not a member of specified group";
+            send_error_message("ERROR: User is not a member of specified group");
             exit();
         }
         else if(handle_file_upload()){
@@ -37,7 +36,6 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
             exit();
         }
         else{
-            echo "ERROR: Failed to upload file";
             exit();
         }
     }
@@ -118,9 +116,6 @@ function create_task($user_id, $task_title, $task_body, $task_creation_date, $ta
             unlink(FILE_DIR . $file_id);
         }
     } 
-    else{
-        echo "Task created";
-    }
 }
 
 function is_group_member($user_id, $group_id){
@@ -143,7 +138,7 @@ function handle_file_upload(){
         $file_mime_type = mime_content_type($file_tmp_name);
 
         if ($file_size > FILE_SIZE_LIMIT) {
-            echo "Error: File failed to upload, file size is too big"; 
+            send_error_message("ERROR: File failed to upload, file size exceeded " . FILE_SIZE_LIMIT);
             return false;
         }
 
@@ -156,7 +151,7 @@ function handle_file_upload(){
         $file_full_path = FILE_DIR . $file_id;
 
         if(is_file($file_full_path)) {
-            /* echo "Error: File path already exists"; */
+            /* echo "ERROR: File path already exists"; */
             return false;
         }
 
@@ -167,7 +162,7 @@ function handle_file_upload(){
 
         else{
             mysqli_query($mysqli, "DELETE FROM files WHERE file_id=$file_id;");
-            /* echo "Error: Failed to upload"; */
+            send_error_message("ERROR: Failed to upload file");
             return false;
         }
 
@@ -175,6 +170,14 @@ function handle_file_upload(){
     else{
         return true;
     }
+}
+
+function send_error_message($error_message){
+    class JsonClass{}
+    $json_object = new JsonClass();
+    $json_object->errorMessage = $error_message;
+    $json_object = json_encode($json_object);
+    echo $json_object;
 }
 
 ?>

@@ -1,6 +1,7 @@
 let lastUpdatedTimestamp = 0;
 let storedTasks = [];
 let currentlyDisplayedTaskId = 0;
+let currentlyDisplayedTaskStatus = false;
 let currentlyDisplayedReferenceFileName = "";
 let currentlyDisplayedGroupId = 1; // temporary until i properly add groups
 
@@ -140,7 +141,7 @@ function displaySideTask(storedTask){
         formattedTaskDeadlineTime = taskDeadlineDate.toLocaleTimeString();
         sideTaskDateDiv.innerText += `Deadline: ${formattedTaskDeadlineDate} ${formattedTaskDeadlineTime}`;
     }
-    handleSideTaskCompletion(sentTaskStatus, taskId);
+    handleSideTaskStatus(sentTaskStatus, taskId);
 }
 
 
@@ -192,10 +193,13 @@ function displayMainTask(storedTask){
         referenceFileContainerDiv.style.display = "none";
     }
 
-    changeTaskStatusDisplay(sentTaskStatus, sentTaskTimestamp);
     currentlyDisplayedTaskId = taskId;
+
+    currentlyDisplayedTaskStatus = sentTaskStatus;
+    changeTaskStatusDisplay(sentTaskStatus, sentTaskTimestamp);
+    handleSideTaskStatus(sentTaskStatus, taskId);
+
     highlightSidebarButton("task" + taskId);
-    handleSideTaskCompletion(sentTaskStatus, taskId);
     displayMainTaskDiv();
 }
 
@@ -218,6 +222,15 @@ async function referenceFileDownload(taskId, referenceFileName){
         .catch((error) => console.error('ERROR:', error));
 }
 
+function taskSendButton(){
+    if(currentlyDisplayedTaskStatus == false){
+        taskFileUpload();
+    }
+    else{
+        taskFileDeletion();
+    }
+}
+
 async function taskFileUpload(){
     let taskId = currentlyDisplayedTaskId;
     let file = document.getElementById("taskFileUpload").files[0];
@@ -233,9 +246,39 @@ async function taskFileUpload(){
         let response = await taskFileUploadFetch.text();
         if (response != ""){
             response = JSON.parse(response);
+            if(response.errorMessage != null){
+                window.alert(response.errorMessage);
+            }
+            else{
+                storeTaskStatus(response.taskStatus, taskId);
+                currentlyDisplayedTaskStatus = response.taskStatus;
+                changeTaskStatusDisplay(response.taskStatus, response.taskTimestamp);
+                handleSideTaskStatus(response.taskStatus, taskId);
+            }
+        }
+    }
+} 
+
+async function taskFileDeletion(){
+    let taskId = currentlyDisplayedTaskId;
+    let formData = new FormData();
+    formData.append("taskId", taskId);
+    let taskFileUploadFetch = await fetch('../php/handleSentTaskDeletion.php', {
+        method: 'POST',
+        body: formData
+    })
+        .catch((error) => console.error('ERROR:', error));
+    let response = await taskFileUploadFetch.text();
+    if (response != ""){
+        response = JSON.parse(response);
+        if(response.errorMessage != null){
+            window.alert(response.errorMessage);
+        }
+        else{
             storeTaskStatus(response.taskStatus, taskId);
+            currentlyDisplayedTaskStatus = response.taskStatus;
             changeTaskStatusDisplay(response.taskStatus, response.taskTimestamp);
-            handleSideTaskCompletion(response.taskStatus, taskId);
+            handleSideTaskStatus(response.taskStatus, taskId);
         }
     }
 } 
@@ -299,7 +342,7 @@ function unhighlightSidebarButtons(){
 }
 
 
-function handleSideTaskCompletion(taskStatus, taskId){
+function handleSideTaskStatus(taskStatus, taskId){
     let sideTaskDiv = document.getElementById("task" + taskId);
     if(taskStatus == 1){
         sideTaskDiv.style.borderLeft = "3px solid #77aa77";
@@ -314,7 +357,7 @@ function changeTaskStatusDisplay(taskStatus){
     let taskSendButtonDiv = document.getElementById("taskSendButton");
     if (taskStatus === "1" || taskStatus === true){
         taskStatusDiv.innerText = "Task sent"; 
-        taskSendButtonDiv.innerText = "Send task again"; 
+        taskSendButtonDiv.innerText = "Unsend Task"; 
     }
     else if (taskStatus === "0" || taskStatus === false){
         taskStatusDiv.innerText = "Not sent"; 
@@ -359,8 +402,16 @@ async function submitNewTask(){
 
     let taskTitle = formTaskTitleDiv.value;
     let taskBody = formTaskBodyDiv.value;
-    let taskDeadlineDate = formDeadlineDateDiv.value; // reminder to compare this to current date
-    taskDeadlineDate = new Date(taskDeadlineDate).getTime() / 1000;
+    let taskDeadlineDate = formDeadlineDateDiv.value;
+
+    taskDeadlineDate = new Date(taskDeadlineDate).getTime();
+    let currentTimestamp = Date.now();
+    if (taskDeadlineDate < currentTimestamp){
+        window.alert("The chosen deadline date is in the past, please choose a different date.");
+        return false;
+    }
+    taskDeadlineDate = taskDeadlineDate / 1000;
+
     let file = formReferenceFileDiv.files[0];
 
     let groupId = currentlyDisplayedGroupId;
@@ -379,10 +430,10 @@ async function submitNewTask(){
             formData.append("file", file);
         }
 
-        // formTaskTitleDiv.value = "";
-        // formTaskBodyDiv.value = "";
-        // formDeadlineDateDiv.value = "";
-        // formReferenceFileDiv.value = "";
+        formTaskTitleDiv.value = "";
+        formTaskBodyDiv.value = "";
+        formDeadlineDateDiv.value = "";
+        formReferenceFileDiv.value = "";
 
         let taskCreationFetch = await fetch('../php/handleTaskCreation.php', {
             method: 'POST',
@@ -391,25 +442,21 @@ async function submitNewTask(){
             .catch((error) => console.error('ERROR:', error));
         let response = await taskCreationFetch.text();
         if (response != ""){
-            console.log(response); // temporary
+            response = JSON.parse(response);
+            if(response.errorMessage != ""){
+                window.alert(response.errorMessage);
+            }
             requestAvailableTasks(false);
         }
     }
 } 
-
-function clearNewTaskForm(){
-    let usernameElement = document.getElementById("username");
-    let passwordElement = document.getElementById("password");
-    usernameElement.value = "";
-    passwordElement.value = "";
-}
 
 function spinIcon(iconId){
     let iconElement = document.getElementById(iconId);
     let iconSpin = iconElement.getAttribute("data-spin");
 
     if (iconSpin === null){
-        iconElement.style.transition = "all 0.3s linear";
+        iconElement.style.transition = "all 0.35s linear";
     }
 
     if (iconSpin == "true"){
@@ -447,4 +494,4 @@ sidebarTopButton.addEventListener('click', function(){
     displayTaskCreationForm();
 }); 
 
-// setInterval(requestAvailableTasks(false), 5000);
+setInterval(requestAvailableTasks, 10000);
