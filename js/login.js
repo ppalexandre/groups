@@ -1,14 +1,14 @@
 async function submitForm(){
-    let username = document.getElementById("username").value;
+    let userName = document.getElementById("username").value;
     let password = document.getElementById("password").value;
 
-    let filledForm = {username:username, password:password};
-
-    if (filledForm.username != "" | filledForm.password != ""){
+    if (userName != "" && password != ""){
+        let formData = new FormData();
+        formData.append("userName", userName);
+        formData.append("password", password);
         var loginRequest = await fetch('../php/handleLogin.php', {
             method: 'POST',
-            headers: {'Content-Type': 'application/json'},
-            body: JSON.stringify(filledForm)
+            body: formData
         })
         .catch((error) => console.error('ERROR:', error));
         let response = await loginRequest.text();

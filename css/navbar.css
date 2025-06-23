@@ -41,3 +41,9 @@
     margin-right: 16px;
     transform: rotate(180);
 }
+
+#navbarUserName {
+    display: inline-block;
+    /* width: 50px; */
+    margin-right: 15px;
+}

@@ -1,21 +1,21 @@
 async function submitForm(){
-    let username = document.getElementById("username").value;
+    let userName = document.getElementById("username").value;
     let password = document.getElementById("password").value;
     let repassword = document.getElementById("repassword").value;
 
-    if(password == repassword){
-        let filledForm = {username:username, password:password};
+    if(password === repassword){
 
-        if (filledForm.username != "" | filledForm.password != ""){
+        if (userName != "" && password != ""){
+            let formData = new FormData();
+            formData.append("userName", userName);
+            formData.append("password", password);
             var createUserRequest = await fetch('../php/handleRegister.php', {
                 method: 'POST',
-                headers: {'Content-Type': 'application/json'},
-                body: JSON.stringify(filledForm)
+                body: formData
             })
             .catch((error) => console.error('ERROR:', error));
         }
         let response = await createUserRequest.text();
-
         if (response != ""){
             response = JSON.parse(response); 
             if (response.login === true){
@@ -26,7 +26,6 @@ async function submitForm(){
         }
         clearForm();
     }
-
     else{
         let errorBox = document.getElementById("errorBox");
         errorBox.innerText = "Passwords don't match!";

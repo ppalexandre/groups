@@ -460,6 +460,37 @@ async function submitNewTask(){
     }
 } 
 
+async function sendLogoutRequest(){
+    let logoutRequest = await fetch('../php/handleLogout.php', {
+        method: 'GET',
+        headers: {'Content-Type': 'text/plain'},
+    })
+        .catch((error) => console.error('ERROR:', error));
+    let response = await logoutRequest.text();
+
+    if (response != ""){
+        response = JSON.parse(response); 
+        if (response.logout == true){
+            window.location.href = "../pages/login.php";
+        }
+    }
+}
+
+async function requestOwnUserData(){
+    let ownUserDataRequest = await fetch('../php/requestOwnUserData.php', {
+        method: 'GET',
+        headers: {'Content-Type': 'text/plain'},
+    })
+        .catch((error) => console.error('ERROR:', error));
+    let response = await ownUserDataRequest.text();
+
+    if (response != ""){
+        response = JSON.parse(response); 
+        let navbarUserNameDiv = document.getElementById("navbarUserName");
+        navbarUserNameDiv.innerText = `Logged in as: ${response.userName}`;
+    }
+}
+
 function spinIcon(iconId){
     let iconElement = document.getElementById(iconId);
     let iconSpin = iconElement.getAttribute("data-spin");
@@ -491,6 +522,7 @@ function toggleSidebar(){
     }
 }
 
+requestOwnUserData();
 requestAvailableTasks(true);
 
 let referenceFileContainerDiv = document.getElementById("referenceFileContainer");
